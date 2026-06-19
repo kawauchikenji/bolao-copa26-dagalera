@@ -1143,29 +1143,33 @@ async function salvarConfig(){
 // ============================================================
 async function calcularRanking(){
   const lista=document.getElementById('ranking-lista');lista.innerHTML='<div class="loading">Calculando</div>';
-  const[{data:ap},{data:res},{data:apPre},{data:resPre},{data:cfg}]=await Promise.all([
-    sb.from('amigos_apostas').select('*'),sb.from('amigos_resultados').select('*'),
-    sb.from('amigos_apostas_pre').select('*'),sb.from('amigos_resultados_pre').select('*').eq('id',1).single(),
+  const[{data:pontuacoes},{data:apPre},{data:resPre},{data:cfg}]=await Promise.all([
+    sb.from('amigos_pontuacao_view').select('participante_id,participante,pontos,status').limit(50000),
+    sb.from('amigos_apostas_pre').select('*'),
+    sb.from('amigos_resultados_pre').select('*').eq('id',1).single(),
     sb.from('amigos_config').select('*').eq('id',1).single(),
   ]);
   const c=cfg||config;
-  const mR={};(res||[]).forEach(r=>mR[r.jogo_id]=r);
   const mP={};(apPre||[]).forEach(a=>mP[a.participante_id]=a);
   const rp=resPre||{};
+  const mapaRanking={};
+  (pontuacoes||[]).forEach(row=>{
+    if(!mapaRanking[row.participante_id]){
+      mapaRanking[row.participante_id]={nome:row.participante,pts:0,cr:0,ac:0,er:0};
+    }
+    mapaRanking[row.participante_id].pts+=row.pontos||0;
+    if(row.status==='cravada')mapaRanking[row.participante_id].cr++;
+    else if(row.status==='resultado')mapaRanking[row.participante_id].ac++;
+    else if(row.status==='errou')mapaRanking[row.participante_id].er++;
+  });
   const dados=participantes.map((p,i)=>{
-    const mine=(ap||[]).filter(a=>a.participante_id===p.id);
-    let pts=0,cr=0,ac=0,er=0;
-    mine.forEach(a=>{
-      const r=mR[a.jogo_id];if(!r||r.gols_casa===null||r.gols_fora===null)return;
-      if(a.gols_casa===r.gols_casa&&a.gols_fora===r.gols_fora){pts+=c.pts_cravada;cr++}
-      else{const rv=r.gols_casa>r.gols_fora?1:(r.gols_fora>r.gols_casa?-1:0),av=a.gols_casa>a.gols_fora?1:(a.gols_fora>a.gols_casa?-1:0);if(rv===av){pts+=rv===0?c.pts_empate:c.pts_resultado;ac++}else er++;}
-    });
+    const rk=mapaRanking[p.id]||{pts:0,cr:0,ac:0,er:0};
     const pre=mP[p.id]||{};
     const pCa=rp.campeao&&pre.campeao&&pre.campeao.toLowerCase()===rp.campeao.toLowerCase()?c.pts_campeao:0;
     const pAr=rp.artilheiro&&pre.artilheiro&&pre.artilheiro.toLowerCase()===rp.artilheiro.toLowerCase()?c.pts_artilheiro:0;
     const pAs=rp.assistente&&pre.assistente&&pre.assistente.toLowerCase()===rp.assistente.toLowerCase()?c.pts_assistente:0;
-    pts+=pCa+pAr+pAs;
-    return{id:p.id,nome:p.nome,idx:i,pts,cr,ac,er,pCa,pAr,pAs,mine:p.id===sessao?.participante_id};
+    const pts=rk.pts+pCa+pAr+pAs;
+    return{id:p.id,nome:p.nome,idx:i,pts,cr:rk.cr,ac:rk.ac,er:rk.er,pCa,pAr,pAs,mine:p.id===sessao?.participante_id};
   }).sort((a,b)=>b.pts-a.pts||b.cr-a.cr);
   const med=['p1','p2','p3'];
   lista.innerHTML=dados.map((d,pos)=>`
