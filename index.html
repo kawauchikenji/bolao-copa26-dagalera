@@ -358,26 +358,26 @@ const IN=n=>n.trim().charAt(0).toUpperCase();
 // Mapeamento de jogo_id → próximo jogo e que lado (casa/fora)
 // Baseado no chaveamento oficial da Copa 2026
 const PROXIMOS={
-  // 16-avos → Oitavas
-  201:{jogoId:301,lado:'casa'}, 202:{jogoId:301,lado:'fora'},
-  203:{jogoId:302,lado:'casa'}, 204:{jogoId:302,lado:'fora'},
-  205:{jogoId:303,lado:'casa'}, 206:{jogoId:303,lado:'fora'},
-  207:{jogoId:304,lado:'casa'}, 208:{jogoId:304,lado:'fora'},
-  209:{jogoId:305,lado:'casa'}, 210:{jogoId:305,lado:'fora'},
-  211:{jogoId:306,lado:'casa'}, 212:{jogoId:306,lado:'fora'},
-  213:{jogoId:307,lado:'casa'}, 214:{jogoId:307,lado:'fora'},
-  215:{jogoId:308,lado:'casa'}, 216:{jogoId:308,lado:'fora'},
-  // Oitavas → Quartas
-  301:{jogoId:401,lado:'casa'}, 302:{jogoId:401,lado:'fora'},
-  303:{jogoId:402,lado:'casa'}, 304:{jogoId:402,lado:'fora'},
-  305:{jogoId:403,lado:'casa'}, 306:{jogoId:403,lado:'fora'},
-  307:{jogoId:404,lado:'casa'}, 308:{jogoId:404,lado:'fora'},
-  // Quartas → Semis
-  401:{jogoId:501,lado:'casa'}, 402:{jogoId:501,lado:'fora'},
-  403:{jogoId:502,lado:'casa'}, 404:{jogoId:502,lado:'fora'},
-  // Semis → Final e 3º lugar
+  // 16-avos → Oitavas (cruzamento oficial J89-J96)
+  202:{jogoId:301,lado:'casa'}, 205:{jogoId:301,lado:'fora'}, // J74,J77 -> J89
+  201:{jogoId:302,lado:'casa'}, 203:{jogoId:302,lado:'fora'}, // J73,J75 -> J90
+  204:{jogoId:303,lado:'casa'}, 206:{jogoId:303,lado:'fora'}, // J76,J78 -> J91
+  207:{jogoId:304,lado:'casa'}, 208:{jogoId:304,lado:'fora'}, // J79,J80 -> J92
+  211:{jogoId:305,lado:'casa'}, 212:{jogoId:305,lado:'fora'}, // J83,J84 -> J93
+  209:{jogoId:306,lado:'casa'}, 210:{jogoId:306,lado:'fora'}, // J81,J82 -> J94
+  214:{jogoId:307,lado:'casa'}, 216:{jogoId:307,lado:'fora'}, // J86,J88 -> J95
+  213:{jogoId:308,lado:'casa'}, 215:{jogoId:308,lado:'fora'}, // J85,J87 -> J96
+  // Oitavas → Quartas (J97-J100)
+  301:{jogoId:401,lado:'casa'}, 302:{jogoId:401,lado:'fora'}, // J89,J90 -> J97
+  305:{jogoId:402,lado:'casa'}, 306:{jogoId:402,lado:'fora'}, // J93,J94 -> J98
+  303:{jogoId:403,lado:'casa'}, 304:{jogoId:403,lado:'fora'}, // J91,J92 -> J99
+  307:{jogoId:404,lado:'casa'}, 308:{jogoId:404,lado:'fora'}, // J95,J96 -> J100
+  // Quartas → Semis (J101-J102)
+  401:{jogoId:501,lado:'casa'}, 402:{jogoId:501,lado:'fora'}, // J97,J98 -> J101
+  403:{jogoId:502,lado:'casa'}, 404:{jogoId:502,lado:'fora'}, // J99,J100 -> J102
+  // Semis → Final
   501:{jogoId:602,lado:'casa'}, 502:{jogoId:602,lado:'fora'},
-  // perdedores semis → 3o lugar (601)
+  // perdedores semis → 3o lugar (601), tratado via resolverNomeTime "Perd. SF1/SF2"
 };
 
 let sessao=null,participantes=[],jogos=[],config={pts_cravada:7,pts_resultado:5,pts_empate:5,pts_campeao:15,pts_artilheiro:10,pts_assistente:10,pts_cravada_dezesseis:10,pts_resultado_dezesseis:7,pts_cravada_oitavas:12,pts_resultado_oitavas:9,pts_cravada_quartas:15,pts_resultado_quartas:12,pts_cravada_semis:18,pts_resultado_semis:15,pts_cravada_final:25,pts_resultado_final:20};
